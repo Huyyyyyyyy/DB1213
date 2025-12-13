@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36623.8 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBApi", "DBApi\DBApi.csproj", "{F8FB860C-D6D0-4F0C-950F-3694C56F8824}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBDatabase", "DBDatabase\DBDatabase.csproj", "{0033459A-3AEF-47BC-A5EF-48BCA59BB50E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBUtils", "DBUtils\DBUtils.csproj", "{A58C3740-6574-4BF0-94AA-2C1D803EDB6D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F8FB860C-D6D0-4F0C-950F-3694C56F8824}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8FB860C-D6D0-4F0C-950F-3694C56F8824}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8FB860C-D6D0-4F0C-950F-3694C56F8824}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8FB860C-D6D0-4F0C-950F-3694C56F8824}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0033459A-3AEF-47BC-A5EF-48BCA59BB50E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0033459A-3AEF-47BC-A5EF-48BCA59BB50E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0033459A-3AEF-47BC-A5EF-48BCA59BB50E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0033459A-3AEF-47BC-A5EF-48BCA59BB50E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A58C3740-6574-4BF0-94AA-2C1D803EDB6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A58C3740-6574-4BF0-94AA-2C1D803EDB6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A58C3740-6574-4BF0-94AA-2C1D803EDB6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A58C3740-6574-4BF0-94AA-2C1D803EDB6D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2C28B30F-E74B-4251-9EA4-EFB20A633E6F}
+	EndGlobalSection
+EndGlobal
