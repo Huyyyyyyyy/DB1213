@@ -45,12 +45,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("Open");
 
-var uploadPath = "/var/www/app/uploads";
-if (!Directory.Exists(uploadPath)) Directory.CreateDirectory(uploadPath);
-
+if (!Directory.Exists(Const.ROOT_MEDIA_DIRECTORY)) Directory.CreateDirectory(Const.ROOT_MEDIA_DIRECTORY);
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(uploadPath),
+    FileProvider = new PhysicalFileProvider(Const.ROOT_MEDIA_DIRECTORY),
     RequestPath = "/uploads"
 });
 

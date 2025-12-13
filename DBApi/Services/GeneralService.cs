@@ -1,4 +1,6 @@
-﻿using DBDatabase;
+﻿using DBApi.DTOs.Responses;
+using DBDatabase;
+using DBDatabase.Entities;
 using DBUtils;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -14,37 +16,45 @@ namespace DBApi.Services
             _db = db;
             _logger = logger;
         }
-        public async Task<string> SaveFile(IFormFile file)
+        public async Task<UploadResponse> SaveFile(IFormFile file, string content)
         {
-            var allowed = new[] { "image/jpeg", "image/png", "image/gif", "video/mp4", "video/mpeg" };
-            if (!allowed.Contains(file.ContentType)) return "file type is not allowed";
-            if (file.Length > 10 * 1024 * 1024) return "file size is exceed 10MB";
-
-            var uploadRoot = "/var/www/app/uploads";
-            if (!Directory.Exists(uploadRoot)) Directory.CreateDirectory(uploadRoot);
-
-            var ext = Path.GetExtension(file.FileName);
-            var fileName = $"{Guid.NewGuid()}{ext}";
-            var fullPath = Path.Combine(uploadRoot, fileName);
-
-            // Save file to disk
-            using (var stream = new FileStream(fullPath, FileMode.Create))
+            try
             {
+                if (!Directory.Exists(Const.ROOT_MEDIA_DIRECTORY))
+                    Directory.CreateDirectory(Const.ROOT_MEDIA_DIRECTORY);
+
+                var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+                var fullPath = Path.Combine(Const.ROOT_MEDIA_DIRECTORY, fileName);
+
+                await using var stream = new FileStream(fullPath, FileMode.Create);
                 await file.CopyToAsync(stream);
-            }
 
-            var dbPath = $"/upload/{fileName}";
-            string sql = "INSERT INTO medias (med_id, med_path, med_file_type, med_content, med_created_at) VALUES (@med_id, @med_path, @med_file_type, @med_content, NOW())";
-            var parameters = new Dictionary<string, object?>
+                var repo = new MediaRepository(_db, _logger);
+
+                var row = MediaRow.mapToRow(
+                    ((Const.FileType)MediaRow.toFileType(file.ContentType)!).toDescription(),
+                    content,
+                    Const.getFilePath(fileName)
+                );
+
+                await repo.InsertNewMedia(row);
+
+                return new UploadResponse
+                {
+                    code = 200,
+                    message = "success",
+                    data = row
+                };
+            }
+            catch (Exception ex)
             {
-                ["med_id"] = Guid.NewGuid(),
-                ["med_path"] = dbPath,
-                ["med_file_type"] = file.ContentType,
-                ["med_content"] = "here is the test content",
-            };
-            await _db.ExecuteNonQueryAsync(sql, parameters);
-            _logger.Info($"File uploaded: {dbPath}");
-            return dbPath;
+                _logger.Error($"{nameof(SaveFile)} - FAILED - details : {ex}");
+                return new UploadResponse
+                {
+                    code = 500,
+                    message = "upload failed"
+                };
+            }
         }
     }
 }
