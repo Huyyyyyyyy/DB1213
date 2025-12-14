@@ -32,5 +32,18 @@ namespace DBDatabase.Entities
             string rs = file_type_string.Trim().ToLowerInvariant().Replace("/", "_");
             return Enum.TryParse(rs, out FileType e) ? e : null;
         }
+
+        // Map từ database reader sang object
+        public static MediaRow MapFromReader(System.Data.IDataReader reader)
+        {
+            return new MediaRow
+            {
+                med_id = reader.GetGuid(reader.GetOrdinal("med_id")),
+                med_file_type = reader.GetString(reader.GetOrdinal("med_file_type")),
+                med_content = reader.GetString(reader.GetOrdinal("med_content")),
+                med_path = reader.GetString(reader.GetOrdinal("med_path")),
+                med_created_at = reader.GetDateTime(reader.GetOrdinal("med_created_at"))
+            };
+        }
     }
 }

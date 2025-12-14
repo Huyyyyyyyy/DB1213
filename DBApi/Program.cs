@@ -1,3 +1,4 @@
+using DBApi.Middlewares;
 using DBApi.Services;
 using DBDatabase;
 using DBUtils;
@@ -23,13 +24,15 @@ builder.Services.AddSingleton(sp =>
 builder.Services.AddScoped<GeneralService>();
 builder.Services.AddControllers();
 
-// CORS (optional)
+// CORS - Secure configuration
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("Open", builder => builder
-        .AllowAnyOrigin()
+    options.AddPolicy("Secure", policy => policy
+        .WithOrigins(allowedOrigins)
         .AllowAnyHeader()
-        .AllowAnyMethod());
+        .AllowAnyMethod()
+        .AllowCredentials());
 });
 
 // Build app
@@ -43,7 +46,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("Open");
+app.UseCors("Secure");
+
+// API Key Authentication - Bảo vệ endpoint Admin
+app.UseApiKeyAuthentication();
 
 if (!Directory.Exists(Const.ROOT_MEDIA_DIRECTORY)) Directory.CreateDirectory(Const.ROOT_MEDIA_DIRECTORY);
 app.UseStaticFiles(new StaticFileOptions
