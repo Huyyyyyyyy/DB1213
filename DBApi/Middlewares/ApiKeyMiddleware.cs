@@ -16,8 +16,15 @@ namespace DBApi.Middlewares
         public ApiKeyMiddleware(RequestDelegate next, IConfiguration configuration)
         {
             _next = next;
-            _apiKey = configuration["Security:ApiKey"] 
-                ?? throw new Exception("API Key not configured in appsettings.json");
+            // Ưu tiên đọc từ environment variable, sau đó mới đọc từ config
+            _apiKey = Environment.GetEnvironmentVariable("API_KEY") 
+                ?? configuration["Security:ApiKey"] 
+                ?? throw new Exception("API Key not configured. Set environment variable API_KEY or configure in appsettings.json");
+            
+            if (string.IsNullOrEmpty(_apiKey))
+            {
+                throw new Exception("API Key cannot be empty. Set environment variable API_KEY");
+            }
         }
 
         public async Task InvokeAsync(HttpContext context)

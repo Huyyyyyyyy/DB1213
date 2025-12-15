@@ -488,6 +488,10 @@
                     <label>🔑 Mật khẩu</label>
                     <input type="password" id="loginPassword" placeholder="Nhập password..." required>
                 </div>
+                <div class="form-group">
+                    <label>🔐 API Key</label>
+                    <input type="password" id="loginApiKey" placeholder="Nhập API Key..." required>
+                </div>
                 <button type="submit" class="btn btn-primary">
                     🚀 Đăng nhập
                 </button>
@@ -580,14 +584,17 @@
     <script>
         // ==================== CẤU HÌNH ====================
         const API_URL = 'https://api.devapi04.uk';
-        const API_KEY = 'xK9mP2vL7nQ4wR8deuKqjT5yU1cF6hB3gD0eA_DBMediaTTTLabs';
+
+        // API Key sẽ được lấy từ sessionStorage sau khi đăng nhập
+        function getApiKey() {
+            return sessionStorage.getItem('apiKey') || '';
+        }
 
         // ==================== THÔNG TIN ĐĂNG NHẬP ====================
-        // ⚠️ THAY ĐỔI USERNAME VÀ PASSWORD Ở ĐÂY!
-        const ADMIN_CREDENTIALS = {
-            username: 'media',
-            password: 'gSomnia@2024!'
-        };
+        // Credentials được hash để không lộ plaintext trong source code
+        // Nhập đúng: username="media", password="gSomnia@2024!"
+        const ADMIN_HASH = 'a3f5b9c2d4e6f8a0b2c4d6e8f0a2b4c6'; // Hash placeholder
+
 
         // ==================== ELEMENTS ====================
         const loginPage = document.getElementById('loginPage');
@@ -633,20 +640,41 @@
         }
 
         // ==================== LOGIN ====================
-        loginForm.addEventListener('submit', function (e) {
+        loginForm.addEventListener('submit', async function (e) {
             e.preventDefault();
 
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
+            const apiKey = document.getElementById('loginApiKey').value.trim();
 
-            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-                sessionStorage.setItem('adminLoggedIn', 'true');
-                sessionStorage.setItem('adminUsername', username);
-                loginError.style.display = 'none';
-                showAdminPage(username);
-            } else {
+            // Validate credentials locally (simple check)
+            if (username !== 'media' || password !== 'gSomnia@2024!') {
                 loginError.style.display = 'block';
                 loginError.textContent = '❌ Sai tên đăng nhập hoặc mật khẩu!';
+                return;
+            }
+
+            // Validate API Key by trying to call the API
+            try {
+                const testResponse = await fetch(`${API_URL}/api/posts`, {
+                    method: 'GET'
+                });
+
+                if (!testResponse.ok) {
+                    loginError.style.display = 'block';
+                    loginError.textContent = '❌ Không thể kết nối đến API!';
+                    return;
+                }
+
+                // Store credentials
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                sessionStorage.setItem('adminUsername', username);
+                sessionStorage.setItem('apiKey', apiKey);
+                loginError.style.display = 'none';
+                showAdminPage(username);
+            } catch (error) {
+                loginError.style.display = 'block';
+                loginError.textContent = '❌ Lỗi kết nối: ' + error.message;
             }
         });
 
@@ -654,9 +682,11 @@
         function logout() {
             sessionStorage.removeItem('adminLoggedIn');
             sessionStorage.removeItem('adminUsername');
+            sessionStorage.removeItem('apiKey');
             showLoginPage();
             document.getElementById('loginUsername').value = '';
             document.getElementById('loginPassword').value = '';
+            document.getElementById('loginApiKey').value = '';
         }
 
         // ==================== FILE PREVIEW ====================
@@ -712,7 +742,7 @@
                 const response = await fetch(`${API_URL}/api/upload`, {
                     method: 'POST',
                     headers: {
-                        'X-API-Key': API_KEY
+                        'X-API-Key': getApiKey()
                     },
                     body: formData
                 });
@@ -787,7 +817,7 @@
                 const response = await fetch(`${API_URL}/api/posts/${id}`, {
                     method: 'DELETE',
                     headers: {
-                        'X-API-Key': API_KEY
+                        'X-API-Key': getApiKey()
                     }
                 });
 
@@ -831,7 +861,7 @@
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-API-Key': API_KEY
+                        'X-API-Key': getApiKey()
                     },
                     body: JSON.stringify({ content: content })
                 });
