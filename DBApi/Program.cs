@@ -47,8 +47,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("Secure");
-
-// API Key Authentication - Bảo vệ endpoint Admin
 app.UseApiKeyAuthentication();
 
 if (!Directory.Exists(Const.ROOT_MEDIA_DIRECTORY)) Directory.CreateDirectory(Const.ROOT_MEDIA_DIRECTORY);

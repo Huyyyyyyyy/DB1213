@@ -31,7 +31,6 @@ namespace DBDatabase.Entities
             await _db.ExecuteNonQueryAsync(sql, parameters);
         }
 
-        // Lấy tất cả bài đăng (mới nhất trước)
         public async Task<List<MediaRow>> GetAllMedia(int limit = 50, int offset = 0)
         {
             string sql = @"
@@ -44,21 +43,19 @@ namespace DBDatabase.Entities
                 ["limit"] = limit,
                 ["offset"] = offset
             };
-            return await _db.ExecuteQueryAsync(sql, MediaRow.MapFromReader, parameters);
+            return await _db.ExecuteQueryAsync(sql, MediaRow.mapFromReader, parameters);
         }
 
-        // Lấy 1 bài đăng theo ID
-        public async Task<MediaRow?> GetMediaById(Guid id)
+        public async Task<MediaRow?> GetMediaById(Guid med_id)
         {
             string sql = @"
                 SELECT med_id, med_file_type, med_content, med_path, med_created_at 
                 FROM medias 
-                WHERE med_id = @id";
-            var parameters = new Dictionary<string, object?> { ["id"] = id };
-            return await _db.ExecuteSingleQueryAsync(sql, MediaRow.MapFromReader, parameters);
+                WHERE med_id = @med_id";
+            var parameters = new Dictionary<string, object?> { [nameof(med_id)] = med_id };
+            return await _db.ExecuteSingleQueryAsync(sql, MediaRow.mapFromReader, parameters);
         }
 
-        // Xóa bài đăng
         public async Task<bool> DeleteMedia(Guid id)
         {
             string sql = "DELETE FROM medias WHERE med_id = @id";
@@ -67,7 +64,6 @@ namespace DBDatabase.Entities
             return rows > 0;
         }
 
-        // Đếm tổng số bài đăng
         public async Task<long> GetTotalCount()
         {
             string sql = "SELECT COUNT(*) FROM medias";
@@ -75,7 +71,6 @@ namespace DBDatabase.Entities
             return result;
         }
 
-        // Cập nhật nội dung bài đăng
         public async Task<bool> UpdateMedia(Guid id, string content)
         {
             string sql = "UPDATE medias SET med_content = @content WHERE med_id = @id";

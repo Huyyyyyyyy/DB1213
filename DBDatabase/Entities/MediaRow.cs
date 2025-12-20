@@ -32,9 +32,7 @@ namespace DBDatabase.Entities
             string rs = file_type_string.Trim().ToLowerInvariant().Replace("/", "_");
             return Enum.TryParse(rs, out FileType e) ? e : null;
         }
-
-        // Map từ database reader sang object
-        public static MediaRow MapFromReader(System.Data.IDataReader reader)
+        public static MediaRow mapFromReader(System.Data.IDataReader reader)
         {
             return new MediaRow
             {

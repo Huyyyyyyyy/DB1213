@@ -17,7 +17,6 @@ namespace DBApi.Services
             _logger = logger;
         }
 
-        // ========== Upload bài mới ==========
         public async Task<UploadResponse> SaveFile(IFormFile file, string content)
         {
             try
@@ -59,8 +58,7 @@ namespace DBApi.Services
             }
         }
 
-        // ========== Lấy danh sách bài đăng (có phân trang) ==========
-        public async Task<PostListResponse> GetPosts(int page, int limit)
+        public async Task<GetPostResponse> GetPosts(int page, int limit)
         {
             try
             {
@@ -71,7 +69,7 @@ namespace DBApi.Services
                 var total = await repo.GetTotalCount();
                 var totalPages = (int)Math.Ceiling((double)total / limit);
 
-                return new PostListResponse
+                return new GetPostResponse
                 {
                     code = 200,
                     message = "success",
@@ -88,7 +86,7 @@ namespace DBApi.Services
             catch (Exception ex)
             {
                 _logger.Error($"{nameof(GetPosts)} - FAILED - details : {ex}");
-                return new PostListResponse
+                return new GetPostResponse
                 {
                     code = 500,
                     message = "failed to get posts"
@@ -96,8 +94,7 @@ namespace DBApi.Services
             }
         }
 
-        // ========== Lấy chi tiết 1 bài đăng ==========
-        public async Task<UploadResponse> GetPostById(Guid id)
+        public async Task<GetPostByIdResponse> GetPostById(Guid id)
         {
             try
             {
@@ -106,14 +103,14 @@ namespace DBApi.Services
 
                 if (post == null)
                 {
-                    return new UploadResponse
+                    return new GetPostByIdResponse
                     {
                         code = 404,
-                        message = "post not found"
+                        message = $"id {id} not found"
                     };
                 }
 
-                return new UploadResponse
+                return new GetPostByIdResponse
                 {
                     code = 200,
                     message = "success",
@@ -123,7 +120,7 @@ namespace DBApi.Services
             catch (Exception ex)
             {
                 _logger.Error($"{nameof(GetPostById)} - FAILED - details : {ex}");
-                return new UploadResponse
+                return new GetPostByIdResponse
                 {
                     code = 500,
                     message = "failed to get post"
@@ -131,48 +128,39 @@ namespace DBApi.Services
             }
         }
 
-        // ========== Xóa bài đăng ==========
-        public async Task<UploadResponse> DeletePost(Guid id)
+        public async Task<DeletePostResponse> DeletePost(Guid id)
         {
             try
             {
                 var repo = new MediaRepository(_db, _logger);
-                
-                // Lấy thông tin bài đăng trước để xóa file
                 var post = await repo.GetMediaById(id);
                 if (post == null)
                 {
-                    return new UploadResponse
+                    return new DeletePostResponse
                     {
                         code = 404,
                         message = "post not found"
                     };
                 }
-
-                // Xóa khỏi database
-                var deleted = await repo.DeleteMedia(id);
-
-                if (deleted)
+                var success = await repo.DeleteMedia(id);
+                if (success)
                 {
-                    // Xóa file vật lý
                     var fileName = Path.GetFileName(post.med_path);
                     var fullPath = Path.Combine(Const.ROOT_MEDIA_DIRECTORY, fileName);
-                    if (File.Exists(fullPath))
-                    {
-                        File.Delete(fullPath);
-                    }
+                    if (File.Exists(fullPath)) File.Delete(fullPath);
                 }
 
-                return new UploadResponse
+                return new DeletePostResponse
                 {
                     code = 200,
-                    message = "deleted successfully"
+                    message = "success",
+                    data = post
                 };
             }
             catch (Exception ex)
             {
                 _logger.Error($"{nameof(DeletePost)} - FAILED - details : {ex}");
-                return new UploadResponse
+                return new DeletePostResponse
                 {
                     code = 500,
                     message = "failed to delete post"
@@ -180,14 +168,12 @@ namespace DBApi.Services
             }
         }
 
-        // ========== Cập nhật bài đăng ==========
         public async Task<UploadResponse> UpdatePost(Guid id, string content)
         {
             try
             {
                 var repo = new MediaRepository(_db, _logger);
 
-                // Kiểm tra bài đăng có tồn tại không
                 var post = await repo.GetMediaById(id);
                 if (post == null)
                 {
@@ -198,7 +184,6 @@ namespace DBApi.Services
                     };
                 }
 
-                // Cập nhật nội dung
                 var updated = await repo.UpdateMedia(id, content);
 
                 if (!updated)
@@ -210,13 +195,12 @@ namespace DBApi.Services
                     };
                 }
 
-                // Lấy lại bài đăng sau khi cập nhật
                 var updatedPost = await repo.GetMediaById(id);
 
                 return new UploadResponse
                 {
                     code = 200,
-                    message = "updated successfully",
+                    message = "success",
                     data = updatedPost
                 };
             }

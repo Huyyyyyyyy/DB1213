@@ -2,7 +2,7 @@ using DBDatabase.Entities;
 
 namespace DBApi.DTOs.Responses
 {
-    public class PostListResponse
+    public class GetPostResponse
     {
         public int code { get; set; }
         public string message { get; set; } = string.Empty;
