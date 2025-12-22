@@ -1,7 +1,7 @@
 ﻿using DBApi.DTOs.Requests;
 using DBApi.DTOs.Responses;
 using DBApi.Services;
-using DBDatabase.Entities;
+using DBDatabase.Entities.Media;
 using DBUtils;
 using Microsoft.AspNetCore.Mvc;
 

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DBUtils;
 
-namespace DBDatabase.Entities
+namespace DBDatabase.Entities.Media
 {
     public class MediaRepository
     {

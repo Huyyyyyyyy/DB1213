@@ -1,6 +1,6 @@
 ﻿using DBApi.DTOs.Responses;
 using DBDatabase;
-using DBDatabase.Entities;
+using DBDatabase.Entities.Media;
 using DBUtils;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;

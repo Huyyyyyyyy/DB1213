@@ -1,4 +1,4 @@
-using DBDatabase.Entities;
+using DBDatabase.Entities.Media;
 
 namespace DBApi.DTOs.Responses
 {
