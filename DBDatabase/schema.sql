@@ -15,3 +15,16 @@ CREATE TABLE projects (
     proj_other_site TEXT,
     proj_created_at TIMESTAMP
 );
+
+CREATE TABLE contributors (
+    cont_id UUID PRIMARY KEY,
+    cont_username NVARCHAR(50),
+    cont_nickname NVARCHAR(50),
+    cont_x_link TEXT,
+    cont_image_url TEXT,
+    cont_note TEXT,
+    cont_wallet_address TEXT,
+    cont_created_at TIMESTAMP,
+    cont_soft_deleted BOOLEAN,
+);
+

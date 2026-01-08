@@ -23,6 +23,7 @@ builder.Services.AddSingleton(sp =>
 // Services
 builder.Services.AddScoped<GeneralService>();
 builder.Services.AddScoped<ProjectService>();
+builder.Services.AddScoped<ContributorService>();
 builder.Services.AddControllers();
 
 // CORS - Secure configuration
