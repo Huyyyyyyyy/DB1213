@@ -21,23 +21,5 @@ namespace DBAdmin.Controllers
             var result = await _service.DailyClaimAsync(request);
             return Ok(result);
         }
-
-        [HttpGet("points/{userId}")]
-        public async Task<IActionResult> GetPoints(Guid userId)
-        {
-            return Ok(await _service.GetUserPointsAsync(userId));
-        }
-
-        [HttpGet("referral-link/{userId}")]
-        public async Task<IActionResult> GetReferralLink(Guid userId)
-        {
-            return Ok(await _service.GetReferralLinkAsync(userId));
-        }
-
-        [HttpGet("leaderboard")]
-        public async Task<IActionResult> GetLeaderboard()
-        {
-            return Ok(await _service.GetLeaderboardAsync());
-        }
     }
 }
