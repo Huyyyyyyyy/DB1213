@@ -28,3 +28,29 @@ CREATE TABLE contributors (
     cont_soft_deleted BOOLEAN,
 );
 
+CREATE TABLE users (
+    usr_id UUID PRIMARY KEY,
+    usr_wallet_address TEXT,
+    usr_twitter_id TEXT,
+    usr_points INTEGER,
+    usr_streak INTEGER,
+    usr_latest_claim_date TIMESTAMP,
+    usr_created_at TIMESTAMP,
+);
+
+CREATE TABLE referrals (
+    ref_id UUID PRIMARY KEY,
+    ref_referrer_id UUID REFERENCES users(usr_id) ON DELETE CASCADE,
+    ref_referred_id UUID REFERENCES users(usr_id) ON DELETE CASCADE,
+    ref_earned INTEGER,
+    ref_created_at TIMESTAMP,
+);
+
+CREATE TABLE claims (
+    clms_id UUID PRIMARY KEY,
+    clms_user_id UUID REFERENCES users(usr_id) ON DELETE CASCADE,
+    clms_created_at TIMESTAMP,
+    clms_points INTEGER,
+    clms_streak INTEGER,
+    clms_bonus INTEGER,
+);
